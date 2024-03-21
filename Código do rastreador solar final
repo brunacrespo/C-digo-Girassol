@@ -1,0 +1,227 @@
+
+int motorpins1[4] = {4, 5, 6, 7}; //output das informações do motor azimute
+int motorpins2[4] = {8, 9, 10, 11}; // output das informações do motor elevação
+int counter = 0; //contador para a mudança de caso
+int ldrs[4] = {A0, A1, A2, A3}; //ldrs[0] é o superior direito, ldrs[1] é o superior esquerdo,  ldrs[2] é o inferior esquerdo e o  ldrs[3] é o inferior direito
+int med_esq, med_dir, med_sup, med_inf; //médias
+int ldr_sup_dir = 0; //valor mapeado do LDR superior direito
+int ldr_inf_dir = 0; //valor mapeado do LDR inferior direito
+int ldr_sup_esq = 0; //valor mapeado do LDR superior esquerdo
+int ldr_inf_esq = 0; //valor mapeado do LDR inferior esquerdo
+int dif_azi; //diferença para a rotação do azimute
+int dif_ele; //diferença para a rotação da elevação
+int pause2 = 5;
+
+void setup() {
+  for (int i = 0; i < 4 ; i++) {
+    pinMode(motorpins1[i], OUTPUT);
+    pinMode(motorpins2[i], OUTPUT);
+    pinMode(ldrs[i], INPUT);
+    Serial.begin(9600);
+  }
+
+}
+
+void loop() {
+
+  Serial.print("dif_azi: ");
+  Serial.println(dif_azi);
+  Serial.print("dif_ele: ");
+  Serial.println(dif_ele);
+  Serial.print("LDRSE: ");
+  Serial.println(ldr_sup_esq);
+  Serial.print("LDRIE: ");
+  Serial.println(ldr_inf_esq);
+  delay(250);
+
+  //Leitura mapeada dos LDR's
+  ldr_sup_dir = map(analogRead(ldrs[0]), 0, 1023, 0, 100);
+  ldr_inf_dir = map(analogRead(ldrs[3]), 0, 1023, 0, 100);
+  ldr_sup_esq = map(analogRead(ldrs[1]), 0, 1023, 0, 100);
+  ldr_inf_esq = map(analogRead(ldrs[2]), 0, 1023, 0, 100);
+
+  //media de cada lado
+  med_dir = (ldr_sup_dir + ldr_inf_dir) / 2;
+  med_esq = (ldr_sup_esq + ldr_inf_esq) / 2;
+  med_sup = (ldr_sup_dir + ldr_sup_esq) / 2;
+  med_inf = (ldr_inf_dir + ldr_inf_esq) / 2;
+
+
+  //diferença entre os lados paralelos
+  dif_azi = med_dir - med_esq;
+  dif_ele = med_sup - med_inf;
+  
+
+  //Regulagem do Azimute
+  if (dif_azi > 5 || dif_azi < -5) {
+    while (dif_azi < 0) {
+      //Leitura mapeada dos LDR's
+  ldr_sup_dir = map(analogRead(ldrs[0]), 0, 1023, 0, 100);
+  ldr_inf_dir = map(analogRead(ldrs[3]), 0, 1023, 0, 100);
+  ldr_sup_esq = map(analogRead(ldrs[1]), 0, 1023, 0, 100);
+  ldr_inf_esq = map(analogRead(ldrs[2]), 0, 1023, 0, 100);
+
+  //media de cada lado
+  med_dir = (ldr_sup_dir + ldr_inf_dir) / 2;
+  med_esq = (ldr_sup_esq + ldr_inf_esq) / 2;
+  med_sup = (ldr_sup_dir + ldr_sup_esq) / 2;
+  med_inf = (ldr_inf_dir + ldr_inf_esq) / 2;
+
+
+  //diferença entre os lados paralelos
+  dif_azi = med_dir - med_esq;
+  dif_ele = med_sup - med_inf;
+          digitalWrite(motorpins1[0], HIGH);
+          digitalWrite(motorpins1[1], LOW);
+          digitalWrite(motorpins1[2], LOW);
+          digitalWrite(motorpins1[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins1[0], LOW);
+          digitalWrite(motorpins1[1], HIGH);
+          digitalWrite(motorpins1[2], LOW);
+          digitalWrite(motorpins1[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins1[0], LOW);
+          digitalWrite(motorpins1[1], LOW);
+          digitalWrite(motorpins1[2], HIGH);
+          digitalWrite(motorpins1[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins1[0], LOW);
+          digitalWrite(motorpins1[1], LOW);
+          digitalWrite(motorpins1[2], LOW);
+          digitalWrite(motorpins1[3], HIGH);
+          delay(pause2);
+    }
+    while (dif_azi > 0) {
+      //Leitura mapeada dos LDR's
+  ldr_sup_dir = map(analogRead(ldrs[0]), 0, 1023, 0, 100);
+  ldr_inf_dir = map(analogRead(ldrs[3]), 0, 1023, 0, 100);
+  ldr_sup_esq = map(analogRead(ldrs[1]), 0, 1023, 0, 100);
+  ldr_inf_esq = map(analogRead(ldrs[2]), 0, 1023, 0, 100);
+
+  //media de cada lado
+  med_dir = (ldr_sup_dir + ldr_inf_dir) / 2;
+  med_esq = (ldr_sup_esq + ldr_inf_esq) / 2;
+  med_sup = (ldr_sup_dir + ldr_sup_esq) / 2;
+  med_inf = (ldr_inf_dir + ldr_inf_esq) / 2;
+
+
+  //diferença entre os lados paralelos
+  dif_azi = med_dir - med_esq;
+  dif_ele = med_sup - med_inf;
+          digitalWrite(motorpins1[0], LOW);
+          digitalWrite(motorpins1[1], LOW);
+          digitalWrite(motorpins1[2], LOW);
+          digitalWrite(motorpins1[3], HIGH);
+          delay(pause2);
+          digitalWrite(motorpins1[0], LOW);
+          digitalWrite(motorpins1[1], LOW);
+          digitalWrite(motorpins1[2], HIGH);
+          digitalWrite(motorpins1[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins1[0], LOW);
+          digitalWrite(motorpins1[1], HIGH);
+          digitalWrite(motorpins1[2], LOW);
+          digitalWrite(motorpins1[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins1[0], HIGH);
+          digitalWrite(motorpins1[1], LOW);
+          digitalWrite(motorpins1[2], LOW);
+          digitalWrite(motorpins1[3], LOW);
+          delay(pause2);
+    }
+  }
+
+  //regulagem da elevação
+
+  else if (dif_ele > 5 || dif_ele < -5) {
+    while (dif_ele > 0) {
+      //Leitura mapeada dos LDR's
+  ldr_sup_dir = map(analogRead(ldrs[0]), 0, 1023, 0, 100);
+  ldr_inf_dir = map(analogRead(ldrs[3]), 0, 1023, 0, 100);
+  ldr_sup_esq = map(analogRead(ldrs[1]), 0, 1023, 0, 100);
+  ldr_inf_esq = map(analogRead(ldrs[2]), 0, 1023, 0, 100);
+
+  //media de cada lado
+  med_dir = (ldr_sup_dir + ldr_inf_dir) / 2;
+  med_esq = (ldr_sup_esq + ldr_inf_esq) / 2;
+  med_sup = (ldr_sup_dir + ldr_sup_esq) / 2;
+  med_inf = (ldr_inf_dir + ldr_inf_esq) / 2;
+
+
+  //diferença entre os lados paralelos
+  dif_azi = med_dir - med_esq;
+  dif_ele = med_sup - med_inf;
+          digitalWrite(motorpins2[0], HIGH);
+          digitalWrite(motorpins2[1], LOW);
+          digitalWrite(motorpins2[2], LOW);
+          digitalWrite(motorpins2[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins2[0], LOW);
+          digitalWrite(motorpins2[1], HIGH);
+          digitalWrite(motorpins2[2], LOW);
+          digitalWrite(motorpins2[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins2[0], LOW);
+          digitalWrite(motorpins2[1], LOW);
+          digitalWrite(motorpins2[2], HIGH);
+          digitalWrite(motorpins2[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins2[0], LOW);
+          digitalWrite(motorpins2[1], LOW);
+          digitalWrite(motorpins2[2], LOW);
+          digitalWrite(motorpins2[3], HIGH);
+          delay(pause2);
+    }
+    while (dif_ele < 0) {
+      //Leitura mapeada dos LDR's
+  ldr_sup_dir = map(analogRead(ldrs[0]), 0, 1023, 0, 100);
+  ldr_inf_dir = map(analogRead(ldrs[3]), 0, 1023, 0, 100);
+  ldr_sup_esq = map(analogRead(ldrs[1]), 0, 1023, 0, 100);
+  ldr_inf_esq = map(analogRead(ldrs[2]), 0, 1023, 0, 100);
+
+  //media de cada lado
+  med_dir = (ldr_sup_dir + ldr_inf_dir) / 2;
+  med_esq = (ldr_sup_esq + ldr_inf_esq) / 2;
+  med_sup = (ldr_sup_dir + ldr_sup_esq) / 2;
+  med_inf = (ldr_inf_dir + ldr_inf_esq) / 2;
+
+
+  //diferença entre os lados paralelos
+  dif_azi = med_dir - med_esq;
+  dif_ele = med_sup - med_inf;
+          digitalWrite(motorpins2[0], LOW);
+          digitalWrite(motorpins2[1], LOW);
+          digitalWrite(motorpins2[2], LOW);
+          digitalWrite(motorpins2[3], HIGH);
+          delay(pause2);
+          digitalWrite(motorpins2[0], LOW);
+          digitalWrite(motorpins2[1], LOW);
+          digitalWrite(motorpins2[2], HIGH);
+          digitalWrite(motorpins2[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins2[0], LOW);
+          digitalWrite(motorpins2[1], HIGH);
+          digitalWrite(motorpins2[2], LOW);
+          digitalWrite(motorpins2[3], LOW);
+          delay(pause2);
+          digitalWrite(motorpins2[0], HIGH);
+          digitalWrite(motorpins2[1], LOW);
+          digitalWrite(motorpins2[2], LOW);
+          digitalWrite(motorpins2[3], LOW);
+          delay(pause2);
+    }
+  }
+  //motores param
+  else {
+    digitalWrite(motorpins2[0], LOW);
+    digitalWrite(motorpins2[1], LOW);
+    digitalWrite(motorpins2[2], LOW);
+    digitalWrite(motorpins2[3], LOW);
+    digitalWrite(motorpins1[0], LOW);
+    digitalWrite(motorpins1[1], LOW);
+    digitalWrite(motorpins1[2], LOW);
+    digitalWrite(motorpins1[3], LOW);
+  }
+
+}
